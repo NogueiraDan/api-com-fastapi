@@ -45,7 +45,7 @@ def add_user(user: schemas.User, session: Session = Depends(get_session)):
     return user
 
 
-@app.put("users/{id}")
+@app.put("/users/{id}")
 def update_user(id: int, user: schemas.User, session: Session = Depends(get_session)):
     userObject = session.query(models.User).get(id)
     userObject.name = user.name
@@ -54,6 +54,9 @@ def update_user(id: int, user: schemas.User, session: Session = Depends(get_sess
 
 
 @app.delete("/users/{id}")
-def delete_user(id: int):
-    del fakeDatabase[id]
-    return fakeDatabase
+def delete_user(id: int, session: Session = Depends(get_session)):
+    userObject = session.query(models.User).get(id)
+    session.delete(userObject)
+    session. commit()
+    session.close()
+    return {"sucess": "Usuário deletado"}
